@@ -1,0 +1,63 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'base'
+    id 'com.palantir.docker' version '0.27.0'
+    id 'com.palantir.docker-run' version '0.27.0'
+    id 'pl.allegro.tech.build.axion-release' version '1.13.3'
+}
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    group = 'com.sentiment'
+    version = scmVersion.version
+    sourceCompatibility = '11'
+}
+
+subprojects {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+String imageName = "mquillian/social-sentiment-analysis:$version"
+
+docker {
+    name imageName
+    files "build/libs/${bootJar.archiveFileName.get()}"
+    buildArgs([JAR_FILE: bootJar.archiveFileName.get()])
+}
+
+dockerRun {
+    name project.name
+    image imageName
+    ports '8080:8080'
+    clean true
+    daemonize false
+}

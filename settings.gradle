@@ -1,0 +1,6 @@
+rootProject.name = 'sentiment'
+
+include 'common'
+include 'webapp'
+include 'dataprocessing'
+include 'dataretrieval'
