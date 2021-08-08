@@ -42,22 +42,21 @@ bootJar {
     enabled = false
 }
 
-jar {
-    enabled = true
+bootBuildImage {
+    enabled = false
 }
 
-String imageName = "mquillian/social-sentiment-analysis:$version"
+String imageName = "mquillian/sentiment:$version"
 
 docker {
     name imageName
-    files "build/libs/${bootJar.archiveFileName.get()}"
-    buildArgs([JAR_FILE: bootJar.archiveFileName.get()])
+    files 'common/build/libs'
 }
 
 dockerRun {
     name project.name
     image imageName
-    ports '8080:8080'
+    ports '8081:8080'
     clean true
     daemonize false
 }

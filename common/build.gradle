@@ -5,3 +5,11 @@ dependencies {
 	implementation project(':dataprocessing')
 	implementation project(':dataretrieval')
 }
+
+bootJar {
+	enabled = true
+}
+
+jar {
+	enabled = false
+}
