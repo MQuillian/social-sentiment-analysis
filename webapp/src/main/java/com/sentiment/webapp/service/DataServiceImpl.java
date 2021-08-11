@@ -13,7 +13,7 @@ public class DataServiceImpl implements DataService {
 	private final ProcessedDataRepository repo;
 
 	public DataServiceImpl() {
-		this.svc = DataRetrievalSvcFactory.getDataRetrievalSvc("facebook");
+		this.svc = DataRetrievalSvcFactory.getDataRetrievalSvc("dummy");
 		this.repo = ProcessedDataRepoFactory.getProcessedDataRepo("elasticsearch");
 	}
 
