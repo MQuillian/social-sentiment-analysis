@@ -12,46 +12,44 @@ repositories {
     mavenCentral()
 }
 
-allprojects {
-    group = 'com.sentiment'
-    version = scmVersion.version
-    sourceCompatibility = '11'
+group = 'com.sentiment'
+version = scmVersion.version
+sourceCompatibility = '11'
+
+ext {
+    set('springCloudVersion', "2020.0.3")
 }
 
-subprojects {
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'java'
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework:spring-core:5.3.9'
+    implementation 'org.springframework.data:spring-data-elasticsearch:4.2.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+}
 
-    repositories {
-        mavenCentral()
-    }
-
-    test {
-        useJUnitPlatform()
-    }
-
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter'
-        developmentOnly 'org.springframework.boot:spring-boot-devtools'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
 }
 
-bootJar {
-    enabled = false
+test {
+    useJUnitPlatform()
 }
 
 bootBuildImage {
-    enabled = false
+    enabled = true;
 }
 
 String imageName = "mquillian/sentiment:$version"
 
 docker {
     name imageName
-    files 'common/build/libs'
+    files 'build/libs'
 }
 
 dockerRun {
