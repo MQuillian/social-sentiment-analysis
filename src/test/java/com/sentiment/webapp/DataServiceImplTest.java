@@ -27,7 +27,7 @@ public class DataServiceImplTest {
 	private DataServiceImpl service;
 
 	@Test
-	public void service_ReturnsMessage() {
+	public void service_ReturnsMessage() throws Exception {
 		when(retrievalService.fetchData()).thenReturn("Unprocessed data");
 		when(searchService.processData("Unprocessed data")).thenReturn("PROCESSED DATA");
 		assertThat(service.message()).isEqualTo("PROCESSED DATA");

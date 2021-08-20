@@ -22,6 +22,11 @@ public class DataServiceImpl implements DataService {
 
 	public String message() {
 		String unprocessed = retrievalService.fetchData();
-		return searchService.processData(unprocessed);
+		try {
+			return searchService.processData(unprocessed);
+
+		} catch(Exception e) {
+			return e.getClass().toString() + " - " + e.getMessage();
+		}
 	}
 }

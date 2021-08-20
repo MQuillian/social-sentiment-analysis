@@ -1,5 +1,6 @@
 package com.sentiment.searchengine.elastic;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sentiment.analysis.NaturalLanguageProcessor;
@@ -23,15 +24,11 @@ public class ElasticService implements SearchService {
 		this.nlp = nlp;
 	}
 
-	public String processData(String unprocessedData) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode inputJson = mapper.readTree(unprocessedData);
-			List<SentimentDocument> docs = createSentimentDocuments(inputJson);
-			repository.saveAll(docs);
-		} catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
+	public String processData(String unprocessedData) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode inputJson = mapper.readTree(unprocessedData);
+		List<SentimentDocument> docs = createSentimentDocuments(inputJson);
+		repository.saveAll(docs);
 
 		return unprocessedData;
 	}

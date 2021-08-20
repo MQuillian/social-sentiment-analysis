@@ -28,7 +28,7 @@ public class ElasticServiceTest {
 	private ElasticService service;
 
 	@Test
-	public void processData_GivenValidJsonString_ShouldSaveProcessedData() {
+	public void processData_GivenValidJsonString_ShouldSaveProcessedData() throws Exception {
 
 		ArgumentCaptor<ArrayList<SentimentDocument>> captor = ArgumentCaptor.forClass(ArrayList.class);
 		String validJsonString = "{\"0\": {\"fullText\": \"This is valid Json\"}}";
@@ -44,9 +44,9 @@ public class ElasticServiceTest {
 	}
 
 	@Test
-	public void processData_GivenInvalidJsonString_ShouldNotAnalyzeOrSave() {
+	public void processData_GivenInvalidJsonString_ShouldThrowException() throws Exception {
 		String invalidJsonString = "Not a Json string";
-		service.processData(invalidJsonString);
+		assertThatThrownBy(() -> service.processData(invalidJsonString)).isInstanceOf(JsonParseException.class);
 		verifyNoInteractions(nlp);
 		verifyNoInteractions(repository);
 	}
