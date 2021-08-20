@@ -3,17 +3,21 @@ package com.sentiment.dataretrieval.dummy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sentiment.dataretrieval.common.DataRetrievalService;
-
-import java.io.*;
-
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+@Service(value="dummy")
 public class DummyDataRetrievalService implements DataRetrievalService {
 
 	@Override
 	public String fetchData() {
 		try {
-			InputStream input = new ClassPathResource("original_rt_snippets.txt").getInputStream();
+			InputStream input = new ClassPathResource("small_rt_snippets.txt").getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(input));
 			String line;
 			int index = 0;
@@ -28,7 +32,6 @@ public class DummyDataRetrievalService implements DataRetrievalService {
 			}
 			return map.writerWithDefaultPrettyPrinter().writeValueAsString(root);
 		} catch(Exception e) {
-			System.out.println("YOU DONE MESSED UP");
 			System.out.println(e.getMessage());
 		}
 		return null;

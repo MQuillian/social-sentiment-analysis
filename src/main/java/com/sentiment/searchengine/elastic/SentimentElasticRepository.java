@@ -1,9 +1,6 @@
 package com.sentiment.searchengine.elastic;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-public interface ElasticRepository {
-
-	Page<String> findAll();
+public interface SentimentElasticRepository extends ElasticsearchRepository<SentimentDocument, String> {
 }
