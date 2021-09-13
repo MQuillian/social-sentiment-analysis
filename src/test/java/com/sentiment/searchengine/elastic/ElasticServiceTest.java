@@ -28,10 +28,10 @@ public class ElasticServiceTest {
 	private ElasticService service;
 
 	@Test
-	public void processData_GivenValidJsonString_ShouldSaveProcessedData() throws Exception {
+	public void processData_GivenValidJsonStringWithTimestamp_ShouldSaveProcessedData() throws Exception {
 
 		ArgumentCaptor<ArrayList<SentimentDocument>> captor = ArgumentCaptor.forClass(ArrayList.class);
-		String validJsonString = "{\"0\": {\"fullText\": \"This is valid Json\"}}";
+		String validJsonString = "{\"0\": {\"timestamp\": \"1604580236422\", \"content\": \"This is valid Json\"}}";
 
 		when(nlp.analyzeSentiment(any(String.class))).thenReturn(2);
 
@@ -40,6 +40,24 @@ public class ElasticServiceTest {
 		verify(repository).saveAll((captor.capture()));
 		assertThat(captor.getValue().get(0)).isInstanceOf(SentimentDocument.class);
 		assertThat(captor.getValue().get(0)).hasFieldOrPropertyWithValue("content", "This is valid Json");
+		assertThat(captor.getValue().get(0)).hasFieldOrPropertyWithValue("epochMillisTimestamp", 1604580236422L);
+		assertThat(captor.getValue().get(0)).hasFieldOrPropertyWithValue("sentiment", 2);
+	}
+
+	@Test
+	public void processData_GivenValidJsonStringWithoutTimestamp_ShouldSaveProcessedData() throws Exception {
+
+		ArgumentCaptor<ArrayList<SentimentDocument>> captor = ArgumentCaptor.forClass(ArrayList.class);
+		String validJsonString = "{\"0\": {\"content\": \"This is valid Json\"}}";
+
+		when(nlp.analyzeSentiment(any(String.class))).thenReturn(2);
+
+		service.processData(validJsonString);
+
+		verify(repository).saveAll((captor.capture()));
+		assertThat(captor.getValue().get(0)).isInstanceOf(SentimentDocument.class);
+		assertThat(captor.getValue().get(0)).hasFieldOrPropertyWithValue("content", "This is valid Json");
+		assertThat(captor.getValue().get(0)).hasFieldOrProperty("epochMillisTimestamp");
 		assertThat(captor.getValue().get(0)).hasFieldOrPropertyWithValue("sentiment", 2);
 	}
 
@@ -50,4 +68,5 @@ public class ElasticServiceTest {
 		verifyNoInteractions(nlp);
 		verifyNoInteractions(repository);
 	}
+
 }

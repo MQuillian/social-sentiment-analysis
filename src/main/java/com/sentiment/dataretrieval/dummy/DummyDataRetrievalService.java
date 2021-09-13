@@ -7,9 +7,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.Random;
 
 @Service(value="dummy")
 public class DummyDataRetrievalService implements DataRetrievalService {
@@ -17,16 +16,26 @@ public class DummyDataRetrievalService implements DataRetrievalService {
 	@Override
 	public String fetchData() {
 		try {
-			InputStream input = new ClassPathResource("small_rt_snippets.txt").getInputStream();
+			InputStream input = new ClassPathResource("small_dummy_with_timestamps.txt").getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(input));
 			String line;
 			int index = 0;
 			ObjectMapper map = new ObjectMapper();
 			ObjectNode root = map.createObjectNode();
 			while((line = br.readLine()) != null) {
-				line.trim();
 				ObjectNode child = map.createObjectNode();
-				child.put("fullText", line);
+				try {
+					Long.parseLong(line);
+					child.put("timestamp", line);
+					line = br.readLine();
+				} catch(NumberFormatException notLong) {
+					//No timestamp so only need to add content field
+				} catch(IOException lineAfterTimeIsNull) {
+					//Improper formatting - no text after timestamp
+					System.out.println(lineAfterTimeIsNull.getMessage());
+				}
+
+				child.put("content", line);
 				root.set(String.valueOf(index), child);
 				index++;
 			}
@@ -36,6 +45,4 @@ public class DummyDataRetrievalService implements DataRetrievalService {
 		}
 		return null;
 	}
-
-
 }

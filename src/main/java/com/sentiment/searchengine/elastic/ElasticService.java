@@ -38,8 +38,15 @@ public class ElasticService implements SearchService {
 
 		Iterator<JsonNode> messages = inputRoot.elements();
 		for(int i = 0; messages.hasNext(); i++) {
-			String message = messages.next().get("fullText").asText();
-			documents.add(new SentimentDocument(String.valueOf(i), message, nlp.analyzeSentiment(message)));
+			JsonNode message = messages.next();
+			String content = message.get("content").asText();
+			if(message.has("timestamp")) {
+				long timestamp = message.get("timestamp").asLong();
+				documents.add(new SentimentDocument(String.valueOf(i), timestamp, content, nlp.analyzeSentiment(content)));
+			} else {
+				documents.add(new SentimentDocument(String.valueOf(i), content, nlp.analyzeSentiment(content)));
+
+			}
 		}
 
 		return documents;
